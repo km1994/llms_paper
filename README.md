@@ -26,7 +26,7 @@
 
 > 手机版笔记，可以关注公众号 **【关于NLP那些你不知道的事】** 获取，并加入 【NLP && 推荐学习群】一起学习！！！
 
-<img src="resource/pic/微信截图_20230918094559.jpg" width="50%" >
+<img src="resource/pic/20230818133801.jpg" width="50%" >
 
 > LLMs 千面郎君 面试交流群 (注：人满 可 添加 小编wx：yzyykm666 加群！)
 
