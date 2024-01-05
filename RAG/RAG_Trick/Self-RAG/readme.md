@@ -1,4 +1,4 @@
-# Self-RAG：一种 通过自我反思实现检索增强生成 的 RAG 策略
+ # Self-RAG：一种 通过自我反思实现检索增强生成 的 RAG 策略
 
 > 论文名称：Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection
 > 

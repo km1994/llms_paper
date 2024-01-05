@@ -59,6 +59,83 @@
   - 论文方法：这篇论文介绍了一种名为ProTIP的渐进式工具检索框架，用于复杂的多步骤规划任务。该框架通过对比学习的方式隐式地进行任务分解，同时保持子任务-工具的原子性。
   - 在ToolBench数据集上，ProTIP在工具检索方面超越了基于ChatGPT的任务分解方法，并且在TR的Recall@K=10方面提高了24％，在计划生成方面工具准确性提高了41％。
 
+- LLaVA：经典的多模态大模型
+  - 论文名称：Visual Instruction Tuning
+  - 论文地址：https://arxiv.org/abs/2304.08485
+  - 机构：微软研究院和哥伦比亚大学
+  - Github 地址：https://github.com/haotian-liu/LLaVA
+  - 会议：
+  - 动机：像ChatGPT这种大语言模型只接受文字输入，那么如何让大语言模型接收图像输入呢？
+  - 论文方法：LLaVA提出了一种方法，
+    - 将Clip作为图像的编码器，在Clip后面加入一个线性映射层;
+    - 将Clip编码后的图像特征 Zu 映射到语言模型特征空间中，得到视觉特征 Hv ;
+    - 将其和文本的编码（语言指令的编码）一起送入到Language Model中。
+  - 训练方式：
+    - 第一阶段：**预训练阶段**。在这个阶段，**只训练线性映射层(Projection W)，目的是学习图像空间到语言模型词向量空间的映射**，这阶段使用的数据集为CC3M；
+    - 第二阶段：**微调阶段**。在这阶段，**冻结住视觉编码器的参数，训练线性映射层和大语言模型的参数**。在这一阶段使用的数据集为ScienceQA和基于GPT-4生成的数据集。
+  - 实验效果：该模型展示出了一些接近多模态 GPT-4 的图文理解能力：相对于 GPT-4 获得了 85.1% 的相对得分。当在科学问答（Science QA）上进行微调时，LLaVA 和 GPT-4 的协同作用实现了 92.53%准确率的新 SoTA。
+
+- LLaVAR：增强的视觉指令微调
+  - 论文名称：LLaVAR: Enhanced Visual Instruction Tuning for Text-Rich Image Understanding
+  - 论文地址：https://arxiv.org/pdf/2306.17107.pdf
+  - 机构：佐治亚理工、Adobe和斯坦福
+  - Github 地址：https://github.com/SALT-NLP/LLaVAR
+  - 会议：
+  - 动机：
+  - 论文方法：用OCR的工具从LAION数据集收集了422K包含文本信息的图片，然后用从图片中识别的文字以及图片的caption作为提示词，用text only的GPT-4生成了16K对话，每一个对话都包含和每一张图片关联的 问题-回答 pair。文中集合收集的这些对话数据集以及LLaVA的对话数据，训练了可以对图片中的场景进行细致理解的LLaVAR模型。
+  - 模型结构：
+    - 视觉encoder V：对于224x224分辨率的输入，采用CLIP-ViT-L/14；对于336x336分辨率的输入，采用CLIP-ViT-L/14-336。最后一层Transformer Layer输出的特征通过过一个映射矩阵 W 映射到语言Decoder的单词嵌入空间；
+    - 语言Decoder D：采用基于LLAMA的Vicuna-13B
+  - 训练方式：
+    - 预训练：只训练视觉编码器到LLM编码器之间的映射层（采用LLaVA从CC3M中过滤的595k图文以及新构建的422k粗糙数据）；
+    - 微调：训练视觉编码器到LLM编码器之间的映射层和LLM（采用LLaVA基于MSCOCO构建的158k指令数据以及新构建的16k指令数据训练模型的指令理解能力，同时微调LLM以及图文之间的映射层）；
+
+- Vary: Scaling up the Vision Vocabulary forLarge Vision-Language Models
+  - 论文名称：Vary: Scaling up the Vision Vocabulary forLarge Vision-Language Models
+  - 论文地址：arxiv.org/abs/2312.06109
+  - 动机：
+    - PDF 类文档的难点在于，如何完整恢复图片、表格、标题、段落等内容，形成一个文字版的文档。
+    - 现有开源多模态大模型的问题
+      - 对中文支持较差，毕竟大部分训练数据还是以英文为主。
+      - 文档级的识别程度不高，毕竟多模态大模型也不是单纯做 OCR 任务的，所以训练数据可能有欠缺，在识别文档图像时出现容易缺少内容，导致回答出现幻觉或者不准确。
+  - 思路：通过收集新的数据，训练一个新的视觉编码器，然后和原有的视觉编码器合并。
+
+- Instruct-Imagen: 多模式指导下的图像生成
+  - 论文名称：Instruct-Imagen: Image Generation with Multi-modal Instruction
+  - 机构：谷歌研究院、Google DeepMind
+  - 相关领域：指令微调、多模态
+  - 论文地址：https://arxiv.org/pdf/2401.01952
+  - 作者：Hexiang Hu, Kelvin C.K. Chan, Yu-Chuan Su
+  - 论文方法：篇论文介绍了instruct-imagen，一个解决异构图像生成任务并能够在未知任务上进行泛化的模型。它引入了多模式指导的图像生成，一种利用自然语言将不同模态（例如，文本、边缘、样式、主题等）综合起来的任务表示，使得丰富的图像生成意图可以以统一的格式标准化。作者通过在一个两阶段框架中对预训练的文本到图像扩散模型进行微调来构建instruct-imagen。首先，作者使用检索增强训练来使模型能够基于外部多模态上下文生成图像。随后，作者在多样的图像生成任务上对微调后的模型进行微调，这些任务需要对视觉语言进行理解（例如，基于主题的生成等），每个任务都与一个包含任务本质的多模式指导相配对。在各种图像生成数据集上进行的人工评估表明，instruct-imagen在领域内与先前的任务特定模型相媲美或超越，并展示了对未知和更复杂任务的有希望的泛化能力。
+
+- LLaVA-φ: 高效的多模态助理与小型语言模型
+  - 论文名称：LLaVA-φ: Efficient Multi-Modal Assistant with Small Language Model
+  - 机构：IDEA、华东师范大学
+  - 相关领域：指令微调、多模态
+  - 论文地址：arxiv.org/pdf/2401.02330
+  - 代码：github.com/zhuyiche/llava-phi
+  - 作者：Yichen Zhu, Minjie Zhu, Ning Liu
+  - 论文方法：LLaVA-φ是一个高效的多模态助理，利用最近先进的小型语言模型Phi-2的力量，促进多模态对话。LLaVA-φ标志着紧凑多模态模型领域的显著进步。它证明了即使是具有仅2.7B参数的更小的语言模型，只要它们经过高质量的语料库训练，就可以有效地参与融合文字和视觉元素的复杂对话。该论文的模型在包括视觉理解、推理和基于知识的感知在内的公开可用基准测试上具有可称赞的性能。除了在多模态对话任务中表现出色之外，该论文的模型还为在时间敏感环境和需要实时交互的系统（如具身代理）中的应用开辟了新的途径。它突显了更小的语言模型在保持更高资源效率的同时实现复杂的理解和交互水平的潜力。
+
+- 仅使用文本训练，在零样本字幕生成中挖掘细粒度的图像-文本对齐
+  - 论文名称：Mining Fine-Grained Image-Text Alignment for Zero-Shot Captioning via  Text-Only Training
+  - 机构：上海科技大学
+  - 相关领域：多模态
+  - 论文地址：https://arxiv.org/pdf/2401.02347
+  - 代码：https://github.com/Artanic30/MacCap
+  - 作者：Longtian Qiu, Shan Ning, Xuming He
+  - 论文方法：该论文通过对CLIP潜在空间的分析，提出了一种通过仅使用文本训练的零样本图像字幕生成框架。通过挖掘图像子区域的视觉特征和文本描述中的信息损失，可以减少模态差距，并通过引入噪声注入和重新排序策略提高字幕生成性能。
+
+- 仅使用文本监督学习视觉-语言模型的提示学习
+  - 论文名称：Learning to Prompt with Text Only Supervision for Vision-Language Models
+  - 机构：Google、苏黎世联邦理工学院
+  - 相关领域：预训练、多模态
+  - 论文地址：https://arxiv.org/pdf/2401.02418
+  - 代码：hhttps://github.com/muzairkhattak/ProText
+  - 作者：Muhammad Uzair Khattak, Muhammad Ferjad Naeem, Muzammal Naseer
+  - 论文方法：这篇论文通过仅使用文本数据从语言模型中学习提示，结合了视觉信息和大语言模型的优势。通过这种方法，可以实现对新类别和数据集的零样本转移，减少了大语言模型提示工程的成本。
+
+
 ### GPT4Video 篇
 
 - [GPT4Video](Video/GPT4Video/readme.md)
@@ -133,9 +210,9 @@
   - 论文方法：提出了一种新的优化器LOw-Memory Optimization（LOMO），它**将梯度计算和参数更新融合在一步中以减少内存使用**。通过**将LOMO与现有的内存节省技术集成**，将内存使用降低到10.8％，与标准方法（DeepSpeed解决方案）相比。因此，该方法使单台机器上的65B模型的全参数微调成为可能，该机器配有8×RTX 3090，每个显存为24GB。
 
 - [QLoRA](PEFT/QLoRA/)
-  - 论文名称：FULL PARAMETER FINE-TUNING FOR LARGE LANGUAGE MODELS WITH LIMITED RESOURCES
-  - 论文地址：https://arxiv.org/abs/2306.09782
-  - Github 地址：https://github.com/OpenLMLab/LOMO
+  - 论文名称：QLoRA: Efficient Finetuning of Quantized LLMs
+  - 论文地址：hhttps://arxiv.org/pdf/2305.14314.pdf
+  - Github 地址：https://github.com/artidoro/qlora
   - 会议：
   - 动机：LoRA微调中存在以下三个痛点：
     - **参数空间小**：LoRA中参与训练的参数量较少，解空间较小，效果相比全量微调有一定的差距；
@@ -157,6 +234,17 @@
     - AdaLoRA：通过动态分配参数，从而进一步减少了可微调参数。但是，我们认为存在另一种可以显著减少可训练参数，且效果不会下降的方法。
   - 论文方法：
     - 低秩矩阵的重参数化。具体来说，冻结一对随机初始化的矩阵，这些矩阵在所有适配层之间共享，然后引入可以逐层自适应的可训练缩放向量。如图所示，类似于LoRA，训练的缩放向量和低秩矩阵可以合并至原始权重中，从而消除额外的推理延迟。
+
+- 仅用少量多语言数据即可进行多语言指令微调
+  - 论文名称：Multilingual Instruction Tuning With Just a Pinch of Multilinguality
+  - 相关领域：指令微调
+  - 机构：谷歌研究院、特拉维夫大学
+  - 作者：Uri Shaham, Jonathan Herzig, Roee Aharoni
+  - 论文地址：https://arxiv.org/pdf/2401.01854
+  - Github 地址：
+  - 会议：
+  - 分析：该论文通过研究多语言指令微调对多语言大语言模型（LLMs）的指令跟随能力的影响，发现即使在单语微调中，许多语言也能够将一些指令跟随能力转移到其他语言。此外，通过在英语微调集上仅使用40个多语言示例，可以大幅提高多语言指令跟随的性能，不论在已见或未见的语言上。尽管在这些语言中的训练示例少10倍，但总体上，与单语微调模型相比，使用多语言混合微调的模型在几种语言上表现出可比或更优的性能。最后，通过将指令微调集中的语言数量从1增加到2、3或4，可以增加跨语言通用性。实验结果表明，通过使用极小的多语言指令响应集，可以构建出大规模多语言指令微调的模型。
+
 
 ## GPT 系列篇
 
@@ -220,6 +308,13 @@
     - 2. **基于 LLM 的分类**：查询 LLM 以从文档中选择精确的内容（页面、部分、检索的内容）;
     - 3. **使用检索到的内容进行回答**：根据问题和检索到的内容，生成答案。
 
+-  RAGTruth: 用于开发可靠的检索增强语言模型的幻化语料库
+  - 论文名称：RAGTruth: A Hallucination Corpus for Developing Trustworthy Retrieval-Augmented Language Models
+  - 论文地址：https://arxiv.org/pdf/2401.00396
+  - 相关领域：模型评估、数据集构建
+  - Github 地址：
+  - 会议：
+  - 论文方法：本文介绍了RAGTruth，一个专门用于在LLM应用的标准RAG框架中分析各个领域和任务中的单词级幻象的语料库。RAGTruth包括来自不同LLM使用RAG的近18000个自然生成的回复。这些回复经过精细的手动注释，包括对幻觉强度的评估。该论文不仅对不同LLM的幻觉频率进行了基准测试，还对几种现有的幻觉检测方法的有效性进行了批判性评估。此外，该论文还展示了使用高质量数据集（如RAGTruth），可以对相对较小的LLM进行微调，并在幻觉检测方面与使用GPT-4等最先进的大语言模型的现有提示式方法实现了具有竞争力的性能水平。
 
 ### RAG应用领域篇
 
@@ -749,37 +844,204 @@
   - 论文方法：这篇论文通过几何问题的视角评估了视觉语言模型（VLMs）在多个方面上的推理能力。
   - 通过在多个深度级别上构建该论文的基准测试，实验结果表明，与以前的基准测试所示的推理能力相比，这些模型在几何学（以及一般情况下需要类似推理的其他主题）方面的能力并不如人们所想的那么强大。这在解决更高深度问题时尤为明显，因为解决更高深度的问题需要较长的推理链而不是额外的记忆知识。该论文在该领域的进一步研究中发布了数据集。
 
+-  仅用1%的数据完胜全量数据微调模型!
+  - 论文名称：One Shot Learning as Instruction Data Prospector for Large Language Models
+  - 机构：
+  - 作者：Li, Yunshui and Hui, Binyuan and Xia, Xiaobo and Yang, Jiaxi and Yang, Min and Zhang, Lei and Si, Shuzheng and Liu, Junhao and Liu, Tongliang and Huang, Fei and others
+  - 论文地址：arxiv.org/pdf/2312.10302.pdf
+  - 相关领域：训练数据构建
+  - Github 地址：github.com/pldlgb/nuggets/blob/master/README.md
+  - 会议：
+  - 论文方法：仅用1%的数据完胜全量数据微调模型!#不懂就问有问必答 论文中提出了一种名为Nuggets”的方法，意欲从堆积如山的指令微调数据中挖掘出黄金数据。这种方法利用大语言模型 (LLM)自身作为数据探索工具，通过One shot learning 或者说是Incontext learning，从庞大的指令数据集中挑选出有益的数据。直观来说，如果某个指令对于某个特定任务的少样本学习(Few shot learning)有帮助，那么这个指令就值得被用于训练。如果这个指令能对多个任务有益，那么它就应该成为主要的数据重点另外，有研究显示，In context learning通过提示(Demonstrations)来隐式微调模型，相当于语言模型在幕后以元优化器的角色进行梯度下降操作。因此，利用在In context learning下的性能来预测指令微调的效果是很有前景的。
 
 ## 高效大模型推理 篇
 
 -  有限内存下的高效大模型推理
-  - 论文名称：LLM in a flash: Efficient Large Language Model Inference with Limited  Memory
-  - 论文地址：https://arxiv.org/pdf/2312.11514
-  - Github 地址：
-  - 会议：
-  - 论文方法：这篇论文主要解决的问题是如何在有限的内存容量下高效地运行超出DRAM容量的大语言模型。通过将模型参数存储在闪存上，并根据闪存内存行为按需将其带入DRAM来解决这一挑战。论文通过构建一个与闪存内存行为相协调的推理成本模型，指导该论文在两个关键领域进行优化：减少从闪存传输的数据量和以更大、更连续的块读取数据。论文介绍了两种主要技术：窗口化策略降低数据传输量，行-列捆绑增加从闪存读取的数据块大小。这些方法使得模型可以在可用DRAM容量的两倍大小下运行，并且与CPU和GPU中的简单加载方法相比，推理速度分别增加了4-5倍和20-25倍。该论文的稀疏意识、上下文适应加载和面向硬件的设计为在内存有限的设备上高效推理大语言模型铺平了道路。
+   - 论文名称：LLM in a flash: Efficient Large Language Model Inference with Limited  Memory
+   - 论文地址：https://arxiv.org/pdf/2312.11514
+   - Github 地址：
+   - 会议：
+   - 论文方法：这篇论文主要解决的问题是如何在有限的内存容量下高效地运行超出DRAM容量的大语言模型。通过将模型参数存储在闪存上，并根据闪存内存行为按需将其带入DRAM来解决这一挑战。论文通过构建一个与闪存内存行为相协调的推理成本模型，指导该论文在两个关键领域进行优化：减少从闪存传输的数据量和以更大、更连续的块读取数据。论文介绍了两种主要技术：窗口化策略降低数据传输量，行-列捆绑增加从闪存读取的数据块大小。这些方法使得模型可以在可用DRAM容量的两倍大小下运行，并且与CPU和GPU中的简单加载方法相比，推理速度分别增加了4-5倍和20-25倍。该论文的稀疏意识、上下文适应加载和面向硬件的设计为在内存有限的设备上高效推理大语言模型铺平了道路。
 
 -  ComplexityNet: 通过学习任务复杂度来提高LLM推理效率
-  - 论文名称：ComplexityNet: Increasing LLM Inference Efficiency by Learning Task  Complexity
-  - 论文地址：https://arxiv.org/pdf/2312.11511
-  - Github 地址：
-  - 会议：
-  - 论文方法：这篇论文主要介绍了ComplexityNet，这是一个专门用于评估任务复杂度的精简语言模型。该模型预测了不同能力的各种语言模型的输出准确性的可能性。作者的初步应用是在Mostly Basic Python Problems (MBPP)数据集上。他们首次创建了一组标签来定义任务复杂度。ComplexityNet在确定任务复杂度方面取得了显著的79%准确率，相比于原始模型的34%准确率有了显著改进。此外，与使用最高复杂度模型相比，ComplexityNet可以有效地减少90%的计算资源使用量，同时保持高达86.7%的代码生成准确率。这项研究表明，通过微调较小的模型来对任务进行分类，可以在使用大型语言模型时在准确性和效率之间取得更平衡的权衡。该论文的发现为优化LLM应用指明了一个有前景的方向，尤其是在资源受限的环境下。
+   - 论文名称：ComplexityNet: Increasing LLM Inference Efficiency by Learning Task  Complexity
+   - 论文地址：https://arxiv.org/pdf/2312.11511
+   - Github 地址：
+   - 会议：
+   - 论文方法：这篇论文主要介绍了ComplexityNet，这是一个专门用于评估任务复杂度的精简语言模型。该模型预测了不同能力的各种语言模型的输出准确性的可能性。作者的初步应用是在Mostly Basic Python Problems (MBPP)数据集上。他们首次创建了一组标签来定义任务复杂度。ComplexityNet在确定任务复杂度方面取得了显著的79%准确率，相比于原始模型的34%准确率有了显著改进。此外，与使用最高复杂度模型相比，ComplexityNet可以有效地减少90%的计算资源使用量，同时保持高达86.7%的代码生成准确率。这项研究表明，通过微调较小的模型来对任务进行分类，可以在使用大型语言模型时在准确性和效率之间取得更平衡的权衡。该论文的发现为优化LLM应用指明了一个有前景的方向，尤其是在资源受限的环境下。
+
+-  超越Chinchilla-Optimal: 在语言模型缩放定律中考虑推理
+   - 论文名称：Beyond Chinchilla-Optimal: Accounting for Inference in Language Model Scaling Laws
+   - 论文地址：https://arxiv.org/pdf/2401.00448
+   - 相关领域：模型结构改进
+   - Github 地址：
+   - 会议：
+   - 论文方法：本论文修改了Chinchilla缩放定律，计算了训练和部署具有给定推理需求和质量的语言模型所需的最佳参数数量和预训练数据大小。研究发现，对于预计存在相当大推理需求（约10亿次请求）的语言模型研究者来说，应该训练比Chinchilla-optimal更小更长的模型。
+
+-  Understanding LLMs：从训练到推理的全面概述
+   - 论文名称：Understanding LLMs: A Comprehensive Overview from Training to Inference
+   - 论文地址：https://arxiv.org/pdf/2401.02038
+   - 相关领域：模型结构改进、预训练
+   - 作者：Yiheng Liu, Hao He, Tianle Han
+   - Github 地址：
+   - 会议：
+   - 论文方法：这篇论文讨论了大语言模型（LLMs）的训练技术和推理部署技术的演变，并探讨了低成本训练和部署LLMs在未来的发展趋势。训练方面的讨论包括数据预处理、训练架构、预训练任务、并行训练以及与模型微调相关的内容。在推理方面，论文还涵盖了模型压缩、并行计算、内存调度和结构优化等主题。它还探讨了LLMs的应用，并对它们的未来发展提供了见解。
+
 
 ## 大模型评估篇
 
--  Catwalk: 多数据集的统一语言模型评估框架
-  - 论文名称：Catwalk: A Unified Language Model Evaluation Framework for Many Datasets
-  - 论文地址：https://arxiv.org/pdf/2312.10253
-  - Github 地址：https://github.com/allenai/catwalk
-  - 会议：
-  - 论文方法：这篇论文介绍了Catwalk，一个为了解决大规模比较NLP模型在多个任务、领域和数据集上的工程挑战而设计的统一界面。它使得在大规模实验中进行公平和可控的比较更加容易。通过一个命令，Catwalk可以在86个数据集上对64个模型进行微调和评估，而无需编写任何代码。
+- Catwalk: 多数据集的统一语言模型评估框架
+   - 论文名称：Catwalk: A Unified Language Model Evaluation Framework for Many Datasets
+   - 论文地址：https://arxiv.org/pdf/2312.10253
+   - Github 地址：https://github.com/allenai/catwalk
+   - 会议：
+   - 论文方法：这篇论文介绍了Catwalk，一个为了解决大规模比较NLP模型在多个任务、领域和数据集上的工程挑战而设计的统一界面。它使得在大规模实验中进行公平和可控的比较更加容易。通过一个命令，Catwalk可以在86个数据集上对64个模型进行微调和评估，而无需编写任何代码。
 
--  KGLens: 一种参数化的知识图谱解决方案，用于评估LLM所知和不知道的内容
-  - 论文名称：KGLens: A Parameterized Knowledge Graph Solution to Assess What an LLM  Does and Doesn't Know
-  - 论文地址：https://arxiv.org/pdf/2312.11539
-  - Github 地址：
-  - 会议：
-  - 论文方法：本文介绍了KGLens这一方法，通过以结构感知的方式从知识图谱中生成自然语言问题，以评估LLM。KGLens使用了参数化的知识图谱，在该图谱中，每个边都附加了一个贝塔分布，用于指导从知识图谱中进行QA测试时如何采样边。随着评估的进行，对参数化的知识图谱的不同边进行采样和评估，从而收敛到更全局的LLM在知识图谱上的性能图景。
-  - 实验中，该论文构建了三个领域特定的用于知识评估的知识图谱，包含超过19,000个边，700个关系和21,000个实体。结果表明，KGLens不仅可以评估整体性能，还可以提供LLM的主题、时间和关系分析。这展示了KGLens的适应性和可定制性，强调其基于特定标准的评估能力。
+- KGLens: 一种参数化的知识图谱解决方案，用于评估LLM所知和不知道的内容
+   - 论文名称：KGLens: A Parameterized Knowledge Graph Solution to Assess What an LLM  Does and Doesn't Know
+   - 论文地址：https://arxiv.org/pdf/2312.11539
+   - Github 地址：
+   - 会议：
+   - 论文方法：本文介绍了KGLens这一方法，通过以结构感知的方式从知识图谱中生成自然语言问题，以评估LLM。KGLens使用了参数化的知识图谱，在该图谱中，每个边都附加了一个贝塔分布，用于指导从知识图谱中进行QA测试时如何采样边。随着评估的进行，对参数化的知识图谱的不同边进行采样和评估，从而收敛到更全局的LLM在知识图谱上的性能图景。
+   - 实验中，该论文构建了三个领域特定的用于知识评估的知识图谱，包含超过19,000个边，700个关系和21,000个实体。结果表明，KGLens不仅可以评估整体性能，还可以提供LLM的主题、时间和关系分析。这展示了KGLens的适应性和可定制性，强调其基于特定标准的评估能力。
+
+- 人工智能是否能像人类一样具备创造力？
+   - Can AI Be as Creative as Humans?
+   - 论文地址：https://arxiv.org/pdf/2401.01623
+   - 机构：斯坦福大学、罗格斯大学、微软研究院
+   - 作者：Haonan Wang, James Zou, Michael Mozer
+   - 相关领域：指令微调、模型评估
+   - Github 地址：
+   - 会议：
+   - 论文方法：本文探讨了创造力的定义和评估的复杂性，介绍了一种新的概念——相对创造力。相对于试图普遍定义创造力，该论文将重点放在人工智能能否与假想的人类创造能力相匹配上。这种方法有助于通过统计量化评估AI的创造力，该论文称之为统计创造力。在此基础上，该论文讨论了统计创造力在当下的提示条件自回归模型中的应用。除了定义和分析创造力的指标外，该论文还提出了一种可行的训练指南，有效地将创造力的理论量化与实际模型训练相结合。通过这些多方面的贡献，本文建立了一个连贯、不断演变和变革性的框架，以评估和促进AI模型的统计创造力。
+
+## 大模型预训练篇
+
+- 大模型并不是你所需要的全部
+   - 论文名称：Large Language Models aren't all that you need
+   - 机构：印度理工学院
+   - 作者：Kiran Voderhobli Holla, Chaithanya Kumar, Aryan Singh
+   - 论文地址：arxiv.org/pdf/2401.00698
+   - 相关领域：模型结构改进、预训练
+   - Github 地址：
+   - 会议：
+   - 论文方法：这篇论文主要探讨了在解决SemEval 2023任务2：多语种复杂命名实体识别方面的架构和系统。作者评估了两种方法，一种是传统的CRF模型，另一种是经过定制头部微调的大型语言模型（LLM），并进行了比较。论文探索了一些新颖的想法，包括：1）衰减辅助损失（具有残差）- 在模型上训练粗粒度命名实体识别的辅助任务，并将该任务作为损失函数的一部分；2）三元标记混合- 在最终的命名实体识别层中，探索了混合相邻标记嵌入的方法；3）任务优化头部- 探索了各种定制头部和学习率用于LLM的最终层。作者还尝试了多个LLM，包括GPT-3，并在最终模型上进行了多种dropout和超参数设置的实验，最终在测试数据上获得了0.67/0.61的micro & macro f1分数。研究结果表明，尽管预训练的LLM相比传统模型带来了很大的性能提升，但通过上述额外的特征/损失/模型工程技术对宏观F1分数的改进是可行的。
+
+- TinyLlama: 一个开源的小型语言模型
+   - 论文名称：TinyLlama: An Open-Source Small Language Model
+   - 机构：
+   - 作者：Peiyuan Zhang, Guangtao Zeng, Tianduo Wang
+   - 论文地址：arxiv.org/pdf/2401.02385
+   - 相关领域：模型结构改进、预训练
+   - Github 地址：github.com/jzhang38/TinyLlama
+   - 会议：
+   - 论文方法：TinyLlama是一个在大约3个时期内在大约1万亿个标记上预训练的紧凑1.1B语言模型。TinyLlama建立在Llama 2的架构和分词器之上，利用了开源社区贡献的各种进展（例如FlashAttention），实现了更好的计算效率。尽管规模相对较小，但TinyLlama在一系列下游任务中展现了显著的性能。它明显优于具有相似规模的现有开源语言模型。该论文的模型检查点和代码公开在GitHub上，网址为https://github.com/jzhang38/TinyLlama。
+
+- LLM增强LLM：通过组合扩展能力
+   - 论文名称：LLM Augmented LLMs: Expanding Capabilities through Composition
+   - 机构：谷歌研究院、Google DeepMind
+   - 作者：Rachit Bansal, Bidisha Samanta, Siddharth Dalmia
+   - 论文地址：arxiv.org/pdf/2401.02412
+   - 相关领域：模型结构改进、预训练
+   - Github 地址：
+   - 会议：
+   - 论文方法：这篇论文主要探讨了在大语言模型的基础上如何通过组合来增强模型能力的问题。通过引入交叉注意力机制，将现有的模型与具有特定任务的模型进行组合，从而实现新的能力。作者提出的CALM方法在多个领域和设置下都适用，并通过将PaLM2-S与在低资源语言上训练的较小模型进行组合，在翻译和算术推理等任务上取得了显著的改进。
+
+- LLaMA Pro: 带有块扩展的渐进式 LLaMA
+   - 论文名称：LLaMA Pro: Progressive LLaMA with Block Expansion
+   - 机构：香港大学、上海交通大学、Tencent PCG实验室
+   - 作者：Chengyue Wu, Yukang Gan, Yixiao Ge
+   - 论文地址：arxiv.org/pdf/2401.02415
+   - 相关领域：模型结构改进、预训练
+   - Github 地址：
+   - 会议：
+   - 论文方法：这篇论文介绍了一种新的后预训练方法，通过扩展Transformer模块，仅使用新语料库进行调整，有效提升模型的知识，避免灾难性遗忘。研究者在代码和数学语料库上进行实验，得到了LLaMA Pro-8.3B模型，该模型基于LLaMA2-7B模型初始，在通用任务、编程和数学方面有出色表现。LLaMA Pro及其指令遵循对应模型(LLaMA Pro-Instruct)在各项基准测试中取得了先进的性能，证明其在LLaMA系列和各种任务中具有卓越的优势和推理能力。该研究为融合自然语言和编程语言提供了有价值的洞见，为在不同环境中有效运行的先进语言模型的开发奠定了坚实的基础。
+
+- 无需注释的病理定位的通用视觉语言预训练
+   - 论文名称：Generalizable vision-language pre-training for annotation-free pathology  localization
+   - 机构：香港大学、鹏城实验室、中国科学院大学
+   - 作者：Hao Yang, Hong-Yu Zhou, Cheng Li
+   - 论文地址：arxiv.org/pdf/2401.02044
+   - 相关领域：预训练
+   - Github 地址：
+   - 会议：
+   - 论文方法：该论文介绍了一种针对无需注释的病理定位的通用视觉语言预训练模型。该模型的核心优势在于其基于图像注释无关的多级语义结构对比学习，将医学报告中的多粒度医学概念与丰富的图像特征全面对齐，以适应观察到的和新出现的未知病理的多样表达。实验证明，该模型在4个不同的外部数据集上验证了其泛化能力，在定位5种不同病理方面优于6种最先进的方法，甚至超过人类基准，表明其适用于复杂的临床环境。
+
+- ChartAssistant: 通过图表到表格预训练和多任务指令微调的通用图表多模态语言模型
+   - 论文名称：ChartAssisstant: A Universal Chart Multimodal Language Model via  Chart-to-Table Pre-training and Multitask Instruction Tuning
+   - 机构：香港大学、南京大学、上海交通大学
+   - 作者：Fanqing Meng, Wenqi Shao, Quanfeng Lu
+   - 论文地址：https://arxiv.org/pdf/2401.02384
+   - 相关领域：预训练、指令微调
+   - Github 地址：https://github.com/OpenGVLab/ChartAst
+   - 会议：
+   - 论文方法：这篇论文提出了ChartAssistant，这是一个基于图表的图像语言模型，旨在实现图表理解和推理的通用性。ChartAssistant通过图表到表格解析的预训练和多任务指令遵循的微调，解决了通用多模态模型在泛化和任务特定微调方面的挑战。实验结果显示，与最先进的UniChart方法相比，ChartAssistant在各种图表任务上取得了显著的性能提升，并在实际图表数据上优于OpenAI的GPT-4V(ision)。这篇论文的内容主要是介绍了ChartAssistant的设计与训练方法，并展示了其在图表任务上的性能优势。
+
+- DIALIGHT: 利用大模型轻量级开发和评估任务导向对话系统
+   - 论文名称：DIALIGHT: Lightweight Multilingual Development and Evaluation of  Task-Oriented Dialogue Systems with Large Language Models
+   - 机构：剑桥大学
+   - 作者：Fanqing Meng, Wenqi Shao, Quanfeng Lu
+   - 论文地址：https://arxiv.org/pdf/2401.02208
+   - 相关领域：模型结构改进、预训练
+   - Github 地址：https://github.com/OpenGVLab/ChartAst
+   - 会议：
+   - 论文方法：
+
+
+
+## 机器人篇
+
+- Mobile ALOHA：低成本全身远程操作学习双手机器人移动操作
+   - 论文名称：Mobile ALOHA: Learning Bimanual Mobile Manipulation with Low-Cost  Whole-Body Teleoperation
+   - 机构：斯坦福大学
+   - 作者：Zipeng Fu, Tony Z. Zhao, Chelsea Finn
+   - 论文地址：https://arxiv.org/pdf/2401.02117
+   - 相关领域：模型结构改进、预训练
+   - Github 地址：
+   - 会议：
+   - 论文方法：本论文介绍了一种学习移动操作任务的系统，该任务需要双手协作和全身控制。使用Mobile ALOHA系统进行数据采集，通过与现有的静态ALOHA数据集联合训练，进行监督式行为克隆，提高了移动操作任务的性能，使得Mobile ALOHA能够自主完成复杂的移动操作任务。通过扩展了移动底盘和全身远程操作界面的ALOHA系统，Mobile ALOHA实现了低成本的整体身体远程操作系统。本论文解决了传统机器人学习中关注的桌面操作的局限性，使得机器人具备了移动和灵活性，可以完成更广泛实用的任务。
+
+## 强化学习篇
+
+- [基于表征工程的生成式语言大模型人类偏好对齐](RLHF/RAHF/)
+  - 论文名称：Aligning Large Language Models with Human Preferences through Representation Engineering
+  - 论文链接：https://arxiv.org/abs/2312.15997
+  - 论文动机：
+    - 构建类似ChatGPT生成式语言大模型一般要经过语言模型、提令精调和强化学习三个主要训练步骤，其中**第三步使用强化学习来实现人类期望对齐既有一定的技术难度，又需要多次人工标注反馈**，因而实现上有一定挑战;
+    - **经过前两步语言模型和提令精调之后，语言大模型仍然会生成带有偏见、歧视或者令人不适的回答**;
+    - 为了**提升大模型的安全性、可用性和可信性，与人类期望对齐是必不可少的步骤**;
+    - 然而目前研究表明利用人类反馈的强化学习算法[1]（RLHF）存在训练不稳定、对超参数敏感和训练代价较高等问题。
+  - 论文方法：
+    - 1. 使用带偏好注释的数据集来让大型语言模型“感知”人类的偏好；
+    - 2. 收集模型在不同偏好“刺激”情况下的隐层激活模式；
+    - 3. 利用收集到的激活模式及差异来调整模型使其与与人类偏好对齐。
+
+- ICE-GRT: 基于生成强化学习的指令上下文增强模型
+   - 论文名称：ICE-GRT: Instruction Context Enhancement by Generative Reinforcement  based Transformers
+   - 机构：字节跳动
+   - 作者：Chen Zheng, Ke Sun, Da Tang
+   - 论文地址：arxiv.org/pdf/2401.02072
+   - 相关领域：指令微调、奖励模型、RLHF
+   - Github 地址：
+   - 会议：
+   - 论文方法：这篇论文介绍了ICE-GRT模型，利用基于邻近策略优化（PPO）的人类反馈强化学习（RLHF）来增强大语言模型在领域特定任务中的能力。ICE-GRT在领域内场景中展示了出色的理解和推理能力，不仅能够生成强健的答案，还可以提供答案背后的详细分析。该模型在领域特定任务和12个通用语言任务中表现优秀，相比于同等规模甚至更大规模的大语言模型，取得了最先进的性能。作者对ICE-GRT进行了综合分析，突出了其对大语言模型领域的显著进展。
+
+## 数字人
+
+- 从音频到逼真的人体化：合成对话中的人类
+   - 论文名称：From Audio to Photoreal Embodiment: Synthesizing Humans in Conversations
+   - 机构：
+   - 作者：
+   - 论文地址：https://arxiv.org/pdf/2401.01885
+   - 相关领域：
+   - Github 地址：
+   - 会议：
+   - 论文方法：该论文提出了一个生成全身逼真的头像的框架，根据双方互动的对话动态进行手势生成。通过语音音频输入，该论文可以输出个体的多种手势动作，包括面部、身体和手部的动作。该论文的方法将向量量化的样本多样性与扩散获得的高频细节相结合，生成更具动态和表现力的动作。该论文使用高度逼真的人体化头像可视化生成的动作，可以表达手势中的重要细微之处（例如冷笑和嘲笑）。为了促进这一研究领域的发展，该论文推出了一种首个多视角对话数据集，可用于逼真重构。实验结果显示，该论文的模型生成适当且多样的手势，优于扩散和向量量化单独的方法。此外，该论文的感知评估凸显了光真度（与网格相比）在准确评估对话手势中细微动作细节方面的重要性。代码和数据集可在网上获得。
+
+
+
+
+## 参考
+
+- 文档领域多模态大模型整理 https://zhuanlan.zhihu.com/p/673470907
 
