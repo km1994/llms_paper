@@ -30,6 +30,51 @@
 
 > LLMs 千面郎君 面试交流群 (注：人满 可 添加 小编wx：yzyykm666 加群！)
 
+- [LLMs 论文研读社](#llms-论文研读社)
+  - [多模态篇](#多模态篇)
+    - [GPT4Video 篇](#gpt4video-篇)
+  - [PEFT 系列篇](#peft-系列篇)
+  - [GPT 系列篇](#gpt-系列篇)
+    - [Table 解析篇](#table-解析篇)
+  - [RAG 系列篇](#rag-系列篇)
+    - [RAG Trick篇](#rag-trick篇)
+    - [RAG应用领域篇](#rag应用领域篇)
+      - [医疗领域QA问答](#医疗领域qa问答)
+      - [宗教领域QA问答](#宗教领域qa问答)
+      - [常识领域QA问答](#常识领域qa问答)
+      - [法律领域QA问答](#法律领域qa问答)
+      - [知识图谱领域QA问答](#知识图谱领域qa问答)
+      - [任务型领域QA问答](#任务型领域qa问答)
+      - [汽车领域QA问答](#汽车领域qa问答)
+  - [Prompt 系列篇](#prompt-系列篇)
+  - [LMMs 可解释性篇](#lmms-可解释性篇)
+  - [LLMs4KG 篇](#llms4kg-篇)
+  - [LLMs Agents 篇](#llms-agents-篇)
+    - [角色扮演(Role-Play)](#角色扮演role-play)
+  - [Attention 篇](#attention-篇)
+  - [搜索 篇](#搜索-篇)
+    - [如何 通过 大模型 构建 “query-doc”？](#如何-通过-大模型-构建-query-doc)
+    - [如何 通过 大模型 标注 “query-doc” 正负样例？](#如何-通过-大模型-标注-query-doc-正负样例)
+    - [如何 通过 大模型 改写 “query-doc”？](#如何-通过-大模型-改写-query-doc)
+    - [如何 通过 大模型 综合利用PRF（伪相关反馈）+GRF（生成相关反馈）？](#如何-通过-大模型-综合利用prf伪相关反馈grf生成相关反馈)
+    - [如何 通过 大模型 进行 召排？](#如何-通过-大模型-进行-召排)
+      - [何为 召回？](#何为-召回)
+      - [召回 存在哪些问题？](#召回-存在哪些问题)
+      - [如何 基于encoder的LLM检索器？](#如何-基于encoder的llm检索器)
+      - [如何 基于生成式的LLM检索器？](#如何-基于生成式的llm检索器)
+    - [如何 通过 大模型 进行 排序？](#如何-通过-大模型-进行-排序)
+      - [微调LLM进行相似度计算](#微调llm进行相似度计算)
+      - [提示LLM](#提示llm)
+  - [CoT 篇](#cot-篇)
+  - [微调数据工程 篇](#微调数据工程-篇)
+  - [高效大模型推理 篇](#高效大模型推理-篇)
+  - [大模型评估篇](#大模型评估篇)
+  - [大模型预训练篇](#大模型预训练篇)
+  - [机器人篇](#机器人篇)
+  - [强化学习篇](#强化学习篇)
+  - [数字人](#数字人)
+  - [参考](#参考)
+
 ## 多模态篇
 
 - Gemini：一族功能强大的多模态模
@@ -844,13 +889,13 @@
   - 论文方法：这篇论文通过几何问题的视角评估了视觉语言模型（VLMs）在多个方面上的推理能力。
   - 通过在多个深度级别上构建该论文的基准测试，实验结果表明，与以前的基准测试所示的推理能力相比，这些模型在几何学（以及一般情况下需要类似推理的其他主题）方面的能力并不如人们所想的那么强大。这在解决更高深度问题时尤为明显，因为解决更高深度的问题需要较长的推理链而不是额外的记忆知识。该论文在该领域的进一步研究中发布了数据集。
 
--  仅用1%的数据完胜全量数据微调模型!
+-  [仅用1%的数据完胜全量数据微调模型!](DataEngineering/nuggets)
   - 论文名称：One Shot Learning as Instruction Data Prospector for Large Language Models
   - 机构：
   - 作者：Li, Yunshui and Hui, Binyuan and Xia, Xiaobo and Yang, Jiaxi and Yang, Min and Zhang, Lei and Si, Shuzheng and Liu, Junhao and Liu, Tongliang and Huang, Fei and others
   - 论文地址：arxiv.org/pdf/2312.10302.pdf
   - 相关领域：训练数据构建
-  - Github 地址：github.com/pldlgb/nuggets/blob/master/README.md
+  - Github 地址：https://github.com/pldlgb/nuggets
   - 会议：
   - 论文方法：仅用1%的数据完胜全量数据微调模型!#不懂就问有问必答 论文中提出了一种名为Nuggets”的方法，意欲从堆积如山的指令微调数据中挖掘出黄金数据。这种方法利用大语言模型 (LLM)自身作为数据探索工具，通过One shot learning 或者说是Incontext learning，从庞大的指令数据集中挑选出有益的数据。直观来说，如果某个指令对于某个特定任务的少样本学习(Few shot learning)有帮助，那么这个指令就值得被用于训练。如果这个指令能对多个任务有益，那么它就应该成为主要的数据重点另外，有研究显示，In context learning通过提示(Demonstrations)来隐式微调模型，相当于语言模型在幕后以元优化器的角色进行梯度下降操作。因此，利用在In context learning下的性能来预测指令微调的效果是很有前景的。
 
@@ -916,6 +961,17 @@
    - 论文方法：本文探讨了创造力的定义和评估的复杂性，介绍了一种新的概念——相对创造力。相对于试图普遍定义创造力，该论文将重点放在人工智能能否与假想的人类创造能力相匹配上。这种方法有助于通过统计量化评估AI的创造力，该论文称之为统计创造力。在此基础上，该论文讨论了统计创造力在当下的提示条件自回归模型中的应用。除了定义和分析创造力的指标外，该论文还提出了一种可行的训练指南，有效地将创造力的理论量化与实际模型训练相结合。通过这些多方面的贡献，本文建立了一个连贯、不断演变和变革性的框架，以评估和促进AI模型的统计创造力。
 
 ## 大模型预训练篇
+
+- TeleChat：一个包含30亿、70亿和120亿参数的大型语言模型集合
+  - 论文名称：TeleChat Technical Report
+   - 机构：
+   - 作者：Zihan Wang, Xinzhang Liu, Shixuan Liu
+   - 论文地址：arxiv.org/pdf/2401.03804
+   - 相关领域：模型结构改进、预训练、指令微调、模型评估
+   - Github 地址：
+   - 会议：
+   - 论文方法：TeleChat是一个包含30亿、70亿和120亿参数的大型语言模型集合。它包括预训练的语言模型和与人类偏好一致的fine-tuned聊天模型。TeleChat首先在包含英文和中文的各种文本的广泛语料库上进行预训练，包括数万亿个标记。随后，模型通过细调以与人类偏好一致，遵循该论文描述的详细方法。该论文对TeleChat在语言理解、数学、推理、代码生成和基于知识的问答等各种任务中的性能进行评估。
+   - 实验结果：TeleChat在广泛的公共基准测试中达到了与其他相似规模的开源模型相当的性能。为了支持未来利用LLMs的研究和应用，该论文向公众社区发布了TeleChat 7B和12B变种的fine-tuned模型检查点，以及代码和部分预训练数据。
 
 - 大模型并不是你所需要的全部
    - 论文名称：Large Language Models aren't all that you need
@@ -987,8 +1043,6 @@
    - 会议：
    - 论文方法：
 
-
-
 ## 机器人篇
 
 - Mobile ALOHA：低成本全身远程操作学习双手机器人移动操作
@@ -1038,7 +1092,191 @@
    - 会议：
    - 论文方法：该论文提出了一个生成全身逼真的头像的框架，根据双方互动的对话动态进行手势生成。通过语音音频输入，该论文可以输出个体的多种手势动作，包括面部、身体和手部的动作。该论文的方法将向量量化的样本多样性与扩散获得的高频细节相结合，生成更具动态和表现力的动作。该论文使用高度逼真的人体化头像可视化生成的动作，可以表达手势中的重要细微之处（例如冷笑和嘲笑）。为了促进这一研究领域的发展，该论文推出了一种首个多视角对话数据集，可用于逼真重构。实验结果显示，该论文的模型生成适当且多样的手势，优于扩散和向量量化单独的方法。此外，该论文的感知评估凸显了光真度（与网格相比）在准确评估对话手势中细微动作细节方面的重要性。代码和数据集可在网上获得。
 
+## Long LLM 篇
 
+- 从4K到400K的飞跃：用激活信标扩展LLM的上下文
+  - 论文名称：Soaring from 4K to 400K: Extending LLM's Context with Activation Beacon
+  - 机构：中国人民大学、北京AI研究院
+  - 论文地址：https://arxiv.org/pdf/2401.03462
+  - 相关领域：模型结构
+  -  论文介绍：这篇论文主要介绍了一种名为激活信标（Activation Beacon）的插件模块，用于扩展大语言模型LLM的上下文窗口长度。通过将LLM的原始激活信息压缩为更紧凑的形式，激活信标可以在有限的上下文窗口中感知更长的上下文。它完全保留了LLM在短上下文上的原始能力，同时拥有处理长上下文的新能力。该方法使用短滑动窗口处理长上下文，在训练和推理中达到了竞争性的内存和时间效率。
+  -  实验结果：激活信标可以将Llama-2-7B的上下文长度增加100倍（从4K到400K），同时在长上下文生成和理解任务上取得了优秀的结果。
+
+- LRA
+   - 论文名称：Long range arena : A benchmark for efficient transformers
+   - 机构：
+   - 作者：
+   - 发表时间：2020.11.08
+   - 论文地址：https://arxiv.org/pdf/2011.04006.pdf
+   - 相关领域：Transformers
+   - Github 地址：https://github.com/google-research/long-range-arena
+   - 会议：
+   - 论文方法：
+     - Long ListOps：2k长度左右的层次化数学运算；
+     - Byte-level text classification：文本被视为字节序列而不是常规的字符序列。byte-level是为了增大 input 长度
+     - Byte-level document retrieval：这个任务旨在测试模型将长序列压缩成适合基于相似性匹配的表示的能力。
+     - Image classification：图像分类任务，输入是像素序列
+     - Pathfinder：图像任务，判断图上的两个点是否被线相连。示例由16K像素组成（即128×128的图像）
+  - 【Metrics】accuracy
+  - 【Models/Baselines】
+    - Vanilla Transformer Sparse Transformers Reformers Linformers Longformers Sinkhorn Transformers Performers Synthesizers Linear Transformers BigBird
+  - 【Findings】
+    - BigBird结果最优，但是速度没有提升
+    - Local Attention速度最快，但是效果最差
+    - Performer、Linformer和Linear Transformer，在速度和性能方面似乎能够做出更好的权衡
+  - 【Comments】
+    - 第一个提出的long sequence benchmark，且包含了文本和图像两个模态
+    - 主要针对transformer架构的模型进行测试
+    - 时间较为久远，缺少现有大模型的评测
+
+- SCROLLS
+   - 论文名称：SCROLLS: Standardized CompaRison Over Long Language Sequences
+   - 机构：
+   - 作者：
+   - 发表时间：2022.10.11
+   - 论文地址：https://arxiv.org/pdf/2201.03533.pdf
+   - 相关领域：Transformers
+   - Github 地址：https://github.com/tau-nlp/scrolls
+   - 会议：
+   - 论文方法：
+     - Summarization：包含政府报告、电视剧台词、会议记录等长文本，做总结任务
+     - QA：包含论文、古登堡书籍、电影等的 QA 数据集
+     - NLI：法律领域的自然语言推理数据集，给第一个法律协议，判断能否得出某个假设
+  - 【Metrics】ROUGH, F1, Exact Match
+  - 【Models/Baselines】
+    - BART LED
+  - 【Comments】
+    - 有评测的平台、live leaderboard进行自动评测展示结果（测试集不公开）
+    - 包含的任务类型比较少
+    - 测评的模型少，参考价值较少
+    - 时间比较早，有数据污染的风险
+    - 时间较为久远，缺少现有大模型的评测
+    - 后续的 Zero-SCROLLS是在此基础上更新的benchmark
+
+- Longbench
+   - 论文名称：Longbench: A bilingual, multitask benchmark for long context understanding
+   - 机构：
+   - 作者：
+   - 发表时间：2023.08.28
+   - 论文地址：https://arxiv.org/pdf/2308.14508.pdf
+   - 相关领域：Transformers
+   - Github 地址：https://github.com/THUDM/LongBench
+   - 会议：
+   - 论文方法：
+     - Single-doc QA: 单文档的 QA，文本长度比较长。从多个现有的数据集进行提取，加入了英文和中文的MultiFieldQA数据集。
+     - Multi-doc QA：多文档 QA，英文测试样本来自三个基于维基百科的多跳问答数据集：HotpotQA（包含两个相关段落的2跳问题）、WikiMultihopQA（包含最多5跳的问题）和MuSiQue（最多4跳推理）在数据中会加入干扰段落；中文：基于DuReader构建了一个中文数据集，该数据集是基于百度搜索和百度知道开发的，包括20万个问题和100万篇相关文档。对于每个问题，我们不仅提供与问题相关的几篇文档，还从总文档集中任意选择若干篇作为干扰文档，直到每个问题关联到20篇文档。
+     - Summarization：集合现有的数据集
+     - Synthetic tasks
+     - PassageRetrieval en & zh: 从英文的维基和中文的 C4 数据集分别随机抽取 30 篇文章，选择其中一篇用 GPT3.5-turbo 进行摘要，然后让待评测的模型判断这个摘要是哪篇文章的
+     - Code completion：模型需要根据给定的上下文，包括先前的代码行，来预测接下来应该是什么样的代码行。
+   - 【Metrics】ROUGH-L, F1, Exact Match
+   - 【Models/Baselines】
+     - GPT-3.5-Turbo-16k Llama2-7B-chat-4k LongChat-v1.5-7B32k XGen-7B-8k
+     - InternLM-7B-8k ChatGLM26B ChatGLM2-6B-32k Vicuna-v1.5-7B-16k
+   - 【Findings】
+     - GPT-3.5-Turbo-16k 最优
+     - scaled positional embedding (ChatGLM2-6B-32k) and continued training on longer context (LongChat-v1.5-7B-32k) 取得了还不错的结果
+     - 在6 种任务中，summarization 和 code completion 缺乏区分度，几个模型的表现都很类似
+
+- BAMBOO
+   - 论文名称：BAMBOO: A Comprehensive Benchmark for Evaluating Long Text Modeling Capacities of Large Language Models
+   - 机构：
+   - 作者：
+   - 发表时间：2023.09.23
+   - 论文地址：https://arxiv.org/pdf/2309.13345v1.pdf
+   - 相关领域：Transformers
+   - Github 地址：https://github.com/RUCAIBox/BAMBOO
+   - 会议：
+   - 论文方法：
+    - QA：新建 2 个数据集，选择题，需要多段落综合总结；对一些问题进行了修改，确保模型没见过
+    - Hallucination detection：新建 2 个数据集，数据是论文 + 一个hypothesis，提问假设是否成立
+    - Text sorting：给打乱的文本排序
+    - Language modeling：新建 2 个数据集，预测一个长对话的最后一轮对话的 speaker 是谁
+    - Code completion：基于API文档和代码片段完成代码，对一些文档进行了修改
+
+- L-Eval
+   - 论文名称：L-eval: Instituting standardized evaluation for long context language models
+   - 机构：
+   - 作者：
+   - 发表时间：2023.10.04
+   - 论文地址：https://arxiv.org/pdf/2307.11088.pdf
+   - 相关领域：Transformers
+   - Github 地址：https://github.com/OpenLMLab/LEval
+   - 会议：
+
+- ZeroScrolls
+   - 论文名称：Zeroscrolls: A zero-shot benchmark for long text understanding
+   - 机构：
+   - 作者：
+   - 发表时间：2023.10.14
+   - 论文地址：https://arxiv.org/pdf/2305.14196.pdf
+   - 相关领域：zero shot
+   - Github 地址：https://github.com/tau-nlp/zero_scrolls
+   - 会议：
+
+- M4LE
+   - 论文名称：M4LE: A Multi-Ability Multi-Range Multi-Task Multi-Domain Long-Context Evaluation Benchmark for Large Language Models
+   - 机构：
+   - 作者：
+   - 发表时间：2023.10.30
+   - 论文地址：https://arxiv.org/pdf/2310.19240v1.pdf
+   - 相关领域：short to long comprehensive
+   - Github 地址：https://github.com/KwanWaiChung/M4LE
+   - 会议：
+
+- LooGLE
+   - 论文名称：LooGLE: Can Long-Context Language Models Understand Long Contexts?
+   - 机构：
+   - 作者：
+   - 发表时间：2023.11.08
+   - 论文地址：https://arxiv.org/pdf/2311.04939.pdf
+   - 相关领域：longer texts
+   - Github 地址：https://github.com/bigai-nlco/LooGLE
+   - 会议：
+
+- Needle in a Haystack
+   - 论文名称：Pressure Testing GPT-4-128K With Long Context Recall
+   - 机构：
+   - 作者：
+   - 发表时间：2023.11.09
+   - 论文地址：https://twitter.com/GregKamradt/status/1722386725635580292
+   - 相关领域：longer texts
+   - Github 地址：https://github.com/gkamradt/LLMTest_NeedleInAHaystack
+   - 会议：
+
+## MoE 篇
+
+- [Mixtral 8x7B: 稀疏专家混合语言模型](MoE/Mixtral8x7B/readme.md)
+   - 标题：Mixtral of Experts
+   - 相关领域：模型结构改进、指令微调
+   - 机构：
+   - 作者：Albert Q. Jiang, Alexandre Sablayrolles, Antoine Roux
+   - 发表时间：2023.09.23
+   - 论文地址：arxiv.org/pdf/2401.04088
+   - 相关领域：Transformers
+   - Github 地址：
+   - 会议：
+   - 论文方法：这篇论文介绍了Mixtral 8x7B，一种稀疏专家混合语言模型（SMoE）。Mixtral具有与Mistral 7B相同的架构，不同之处在于每个层由8个前馈块（即专家）组成。对于每个令牌，在每个层中，路由网络选择两个专家来处理当前状态并将其输出进行组合。尽管每个令牌只能看到两个专家，但所选择的专家在每个时间步骤可以不同。结果是，每个令牌可以访问470亿个参数，但在推理过程中只使用130亿个活跃参数。Mixtral使用32k令牌的上下文尺寸进行训练，并且在所有评估基准中胜过或与Llama 2 70B和GPT-3.5相匹配。特别是，在数学、代码生成和多语言基准测试中，Mixtral远远优于Llama 2 70B。该论文还提供了一个fine-tuned的模型，Mixtral 8x7B - Instruct，在人类基准测试中超过了GPT-3.5 Turbo、Claude-2.1、Gemini Pro和Llama 2 70B - chat模型。基础模型和指令模型都是在Apache 2.0许可下发布的。
+
+## mini LLMs 篇
+
+- 项目名称：ChatLM-mini-Chinese
+  - 项目介绍：中文对话0.2B小模型（ChatLM-Chinese-0.2B），开源所有数据集来源、数据清洗、tokenizer训练、模型预训练、SFT指令微调、RLHF优化等流程的全部代码。
+  - 项目地址：https://github.com/charent/ChatLM-mini-Chinese
+
+- 项目名称：TinyLlama-1.1B-Chat-v1.0
+  - 项目介绍：TinyLlama-1.1B-Chat-v1.0是基于1.1B参数的Llama模型TinyLlama-1.1B的最新模型版本，该模型采用与Llama 2相同的架构和分词器，可以集成到现有基于Llama的开源项目中。此模型体积紧凑，适合计算和内存资源受限的应用。它在TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T基础上微调，采用Zephyr训练方案，初步在包含ChatGPT生成对话的UltraChat数据集变体上训练，再通过openbmb/UltraFeedback数据集上进一步优化，后者包含64k个提示和GPT-4评级的模型完成情况。
+  - 适用于内存、资源受限应用的模型版本
+  - 采用Zephyr高效训练方案，经UltraChat数据集微调
+  - 项目地址: https://github.com/jzhang38/TinyLlama
+
+- 项目名称：math-codet5p-770m-py
+  - 项目介绍：math-codet5p-770m-py是一个基于Salesforce/codet5p-770m-py的细粒度调优模型，旨在提升数学推理能力。该项目通过Program-of-Thought蒸馏方法，从大型语言模型gpt-3.5-turbo中提取数学推理能力，并将其迁移到较小的开源代码语言模型中，最终在GSM8K测试数据集上实现了44.88%的准确率。在使用方面，math-codet5p-770m-py可以通过AutoModelForSeq2SeqLM轻松加载，使用Python语言进行问题求解。
+  - 项目地址: https://huggingface.co/zhuxunyu/math-codet5p-770m-py
+
+- 项目名称：Qwen/Qwen-1_8B-Chat
+  - 项目介绍：通义千问-1.8B（Qwen-1.8B）是阿里云研发的通义千问大模型系列的18亿参数规模的模型。Qwen-1.8B是基于Transformer的大语言模型, 在超大规模的预训练数据上进行训练得到。预训练数据类型多样，覆盖广泛，包括大量网络文本、专业书籍、代码等。同时，在Qwen-1.8B的基础上，我们使用对齐机制打造了基于大语言模型的AI助手Qwen-1.8B-Chat。
+  - 项目地址：https://huggingface.co/Qwen/Qwen-1_8B-Chat
 
 
 ## 参考
